@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Priyanshi & Aryan Wedding</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500;700&family=Tiro+Devanagari+Hindi&family=Kalam:wght@400&family=Martel:wght@300;400;600&family=Noto+Serif+Devanagari:wght@400;500;600&family=Amita:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500;700&family=Tiro+Devanagari+Hindi&family=Kalam:wght@400&family=Martel:wght@300;400;600&family=Mukta:wght@400;500;600;700&family=Eczar:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--cream:#F5EBDC;--ink:#4a2a22;--gold:#b8873a;--maroon:#7a1626;--mut:#7d6156;
 --script:'Parisienne',cursive;--serif:'Cormorant Garamond',Georgia,serif;--caps:'Cinzel',serif;
@@ -394,9 +394,24 @@ body:not(.hi) #ctl #lang{padding-top:3px!important}
 #ev-baraat .evtx{transform:translateY(10px)}
 /* Hindi: cleaner fonts, never italic */
 body.hi *{font-style:normal!important}
-body.hi .script,body.hi h2.script{font-family:'Amita','Tiro Devanagari Hindi',serif!important;font-weight:700;line-height:1.4}
-body.hi .tx,body.hi .ev-label,body.hi .timeline,body.hi .panel h3,body.hi .drow,body.hi .nexthint,body.hi p,body.hi .ev-nm b,body.hi .ev-tag,body.hi .ev-dc,body.hi .caps,body.hi .tab,body.hi .panel-date,body.hi summary,body.hi .ev-dc small,body.hi #pet{font-family:'Noto Serif Devanagari','Tiro Devanagari Hindi',serif!important;font-weight:400}
+body.hi .script,body.hi h2.script{font-family:'Eczar','Mukta',serif!important;font-weight:600;line-height:1.3;letter-spacing:0!important}
+body.hi h2.script{font-size:36px!important}
+body.hi .tx,body.hi .ev-label,body.hi .timeline,body.hi .panel h3,body.hi .drow,body.hi .nexthint,body.hi p,body.hi .ev-nm b,body.hi .ev-tag,body.hi .ev-dc,body.hi .caps,body.hi .tab,body.hi .panel-date,body.hi summary,body.hi .ev-dc small,body.hi #pet{font-family:'Mukta',sans-serif!important;font-weight:400;letter-spacing:0!important}
+body.hi p{font-size:1.06em;line-height:1.55}
+body.hi .caps{font-weight:500;font-size:1.08em}
 body.hi b,body.hi .ev-nm b,body.hi .panel h3{font-weight:600!important}
+/* clear "swipe up" cue + inviting seal */
+#hint{display:flex;flex-direction:column;align-items:center;gap:0;font-size:12px!important;letter-spacing:.22em!important;padding:8px 18px 9px;border-radius:999px;background:rgba(60,12,20,.35);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:hintbob 1.6s ease-in-out infinite!important}
+#hint b{font-weight:600;text-transform:uppercase;margin-top:2px}
+#hint .chev{width:12px;height:12px;border-left:2.5px solid #fff;border-top:2.5px solid #fff;transform:rotate(45deg);margin-bottom:-5px;animation:chev 1.6s ease-in-out infinite}
+#hint .chev+.chev{animation-delay:.2s}
+@keyframes chev{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes hintbob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-10px)}}
+body.hi #pet{font-size:15px!important}
+body.hi #hint{font-family:'Mukta',sans-serif!important;letter-spacing:0!important;font-size:15px!important}
+#seal::before,#seal::after{content:"";position:absolute;inset:-6%;border-radius:50%;border:3px solid rgba(255,236,200,.9);animation:ring 2s ease-out infinite;pointer-events:none}
+#seal::after{animation-delay:1s}
+@keyframes ring{0%{transform:scale(.85);opacity:.9}100%{transform:scale(1.6);opacity:0}}
 /* rsvp */
 .rsvp{display:grid;gap:11px;text-align:left;max-width:360px;margin:14px auto 0}
 .rsvp label{font-family:var(--caps);font-size:10.5px;letter-spacing:.16em;color:var(--mut)}
@@ -558,7 +573,7 @@ body.locked #dots,body.locked #hint{opacity:0}
 <div id="dots"></div>
 <canvas id="petals" aria-hidden="true"></canvas><div id="petdock"><button id="pet" aria-label="Shower rose petals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13.5c-3 0-5-2.2-5-5.2 1.6.3 2.6.9 3.2 1.7C10.6 7.6 11.2 6 12 4.5c.8 1.5 1.4 3.1 1.8 5.5.6-.8 1.6-1.4 3.2-1.7 0 3-2 5.2-5 5.2z" fill="currentColor" fill-opacity=".25"/><path d="M12 13.5V20"/><path d="M12 17c-1.6-.2-2.8-1-3.4-2.2M12 18c1.4-.3 2.5-1.1 3-2.3"/></svg><span data-en="Shower petals">Shower petals</span></button></div><div id="ctl"><button id="lang" aria-label="Switch language">हिंदी</button><button id="mus" aria-label="Music on or off"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path id="mwave" d="M16.5 12a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/><path id="mx" d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" fill="none"/></svg></button></div>
 <audio id="music" src="a/music.mp3" loop preload="auto"></audio>
-<div id="hint">SWIPE UP</div>
+<div id="hint"><span class="chev"></span><span class="chev"></span><b data-en="Swipe up">Swipe up</b></div>
 
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -609,7 +624,7 @@ renderDress();
 
 /* ---------- Hindi ---------- */
 var HI={
-"Shower petals":"पुष्प वर्षा","6 PM onwards · Tiger Groove Resort":"शाम 6 बजे से · टाइगर ग्रूव रिसॉर्ट","Engagement & Sangeet Night":"सगाई एवं संगीत संध्या","6 PM onwards":"शाम 6 बजे से","A ring, a promise and a night of music":"एक अंगूठी, एक वादा और संगीत भरी शाम","Breakfast & Check-out":"नाश्ता एवं चेक-आउट","One last meal, with full hearts":"विदा से पहले साथ में आखिरी भोजन","Morning":"सुबह","Vidai":"विदाई","A tearful, loving farewell":"आँसुओं और आशीर्वाद भरी विदाई","After Phere":"फेरों के बाद","Engagement &amp;<br>Sangeet Night":"सगाई एवं<br>संगीत संध्या","By the infinite grace of the Almighty":"परमपिता परमेश्वर की असीम कृपा से","<b>The late Laltu Singh &amp; the late Dayawati</b>":"<b>स्वर्गीय लल्तू सिंह एवं स्वर्गीया दयावती</b>","request your presence at the wedding<br>of their granddaughter":"अपनी पौत्री के शुभ विवाह में<br>आपकी उपस्थिति की कामना करते हैं",
+"Swipe up":"ऊपर स्वाइप करें","Shower petals":"पुष्प वर्षा","6 PM onwards · Tiger Groove Resort":"शाम 6 बजे से · टाइगर ग्रूव रिसॉर्ट","Engagement & Sangeet Night":"सगाई एवं संगीत संध्या","6 PM onwards":"शाम 6 बजे से","A ring, a promise and a night of music":"एक अंगूठी, एक वादा और संगीत भरी शाम","Breakfast & Check-out":"नाश्ता एवं चेक-आउट","One last meal, with full hearts":"विदा से पहले साथ में आखिरी भोजन","Morning":"सुबह","Vidai":"विदाई","A tearful, loving farewell":"आँसुओं और आशीर्वाद भरी विदाई","After Phere":"फेरों के बाद","Engagement &amp;<br>Sangeet Night":"सगाई एवं<br>संगीत संध्या","By the infinite grace of the Almighty":"परमपिता परमेश्वर की असीम कृपा से","<b>The late Laltu Singh &amp; the late Dayawati</b>":"<b>स्वर्गीय लल्तू सिंह एवं स्वर्गीया दयावती</b>","request your presence at the wedding<br>of their granddaughter":"अपनी पौत्री के शुभ विवाह में<br>आपकी उपस्थिति की कामना करते हैं",
 "daughter of Mr. Suresh Singh &amp; Mrs. Deepa Chauhan":"सुपुत्री श्री सुरेश सिंह एवं श्रीमती दीपा चौहान","of Dhampur":"धामपुर","with":"संग","son of Mr. Krishna Pal Singh &amp; Mrs. Sarvesh Chauhan":"सुपुत्र श्री कृष्ण पाल सिंह एवं श्रीमती सर्वेश चौहान","of Ghaziabad":"गाज़ियाबाद",
 "Together with their families":"अपने परिवारजनों के आशीर्वाद सहित","Priyanshi":"प्रियांशी","weds":"संग","Aryan":"आर्यन",
 "29 · 30 November 2026":"29 · 30 नवंबर 2026","With the blessings of":"के शुभ आशीर्वाद से",
@@ -665,6 +680,7 @@ function setLang(l){setTimeout(fitEv,50);lang=l;document.documentElement.lang=l;
  $$('[data-en]').forEach(e=>e.innerHTML=l==='hi'?HI[e.dataset.en]:e.dataset.en);
  $('#lang').textContent=l==='hi'?'EN':'हिंदी';renderDays();renderDress()}
 $('#lang').onclick=()=>setLang(lang==='hi'?'en':'hi');
+
 setLang('hi');
 /* rose petal shower: one tap, one shower of small, curled petals that flutter down */
 (function(){const cv=$('#petals'),cx=cv.getContext('2d'),btn=$('#pet');let P=[],run=false,W=0,H=0,dpr=1,last=0;
