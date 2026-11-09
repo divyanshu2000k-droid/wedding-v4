@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en"><head>
+<html lang="hi"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Priyanshi & Aryan Wedding</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500;700&family=Tiro+Devanagari+Hindi&family=Kalam:wght@400&family=Martel:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500;700&family=Tiro+Devanagari+Hindi&family=Kalam:wght@400&family=Martel:wght@300;400;600&family=Noto+Serif+Devanagari:wght@400;500;600&family=Amita:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--cream:#F5EBDC;--ink:#4a2a22;--gold:#b8873a;--maroon:#7a1626;--mut:#7d6156;
 --script:'Parisienne',cursive;--serif:'Cormorant Garamond',Georgia,serif;--caps:'Cinzel',serif;
@@ -392,6 +392,11 @@ body.hi #pet{font-size:12px!important}
 #ctl button{display:inline-flex!important;align-items:center;justify-content:center;line-height:1;padding-top:0!important;padding-bottom:0!important}
 body:not(.hi) #ctl #lang{padding-top:3px!important}
 #ev-baraat .evtx{transform:translateY(10px)}
+/* Hindi: cleaner fonts, never italic */
+body.hi *{font-style:normal!important}
+body.hi .script,body.hi h2.script{font-family:'Amita','Tiro Devanagari Hindi',serif!important;font-weight:700;line-height:1.4}
+body.hi .tx,body.hi .ev-label,body.hi .timeline,body.hi .panel h3,body.hi .drow,body.hi .nexthint,body.hi p,body.hi .ev-nm b,body.hi .ev-tag,body.hi .ev-dc,body.hi .caps,body.hi .tab,body.hi .panel-date,body.hi summary,body.hi .ev-dc small,body.hi #pet{font-family:'Noto Serif Devanagari','Tiro Devanagari Hindi',serif!important;font-weight:400}
+body.hi b,body.hi .ev-nm b,body.hi .panel h3{font-weight:600!important}
 /* rsvp */
 .rsvp{display:grid;gap:11px;text-align:left;max-width:360px;margin:14px auto 0}
 .rsvp label{font-family:var(--caps);font-size:10.5px;letter-spacing:.16em;color:var(--mut)}
@@ -431,7 +436,7 @@ body.locked #dots,body.locked #hint{opacity:0}
     <p class="fi b" style="--d:1.4;font-size:20px;color:var(--maroon)">॥ श्री गणेशाय नमः ॥</p>
     <p class="fi b doha" style="--d:1.9">विघ्न हरन मंगल करन श्री गणपति महाराज।<br>प्रथम निमंत्रण आपको पूरन कीजे काज॥</p>
     <p class="fi b" style="--d:2.5;font-size:17px;font-style:italic;margin-top:24px">By the infinite grace of the Almighty</p>
-    <p class="fi b one" style="--d:3;font-size:min(20px,3.9vw);color:var(--maroon)"><b>The late Mr. Laltu Singh &amp; the late Mrs. Dayawati</b></p>
+    <p class="fi b one" style="--d:3;font-size:min(20px,3.9vw);color:var(--maroon)"><b>The late Laltu Singh &amp; the late Dayawati</b></p>
     <p class="fi b" style="--d:3.5;font-size:17px;font-style:italic;margin-top:12px;line-height:1.5">request your presence at the wedding<br>of their granddaughter</p>
   </div>
 </section>
@@ -604,7 +609,7 @@ renderDress();
 
 /* ---------- Hindi ---------- */
 var HI={
-"Shower petals":"पुष्प वर्षा","6 PM onwards · Tiger Groove Resort":"शाम 6 बजे से · टाइगर ग्रूव रिसॉर्ट","Engagement & Sangeet Night":"सगाई एवं संगीत संध्या","6 PM onwards":"शाम 6 बजे से","A ring, a promise and a night of music":"एक अंगूठी, एक वादा और संगीत भरी शाम","Breakfast & Check-out":"नाश्ता एवं चेक-आउट","One last meal, with full hearts":"विदा से पहले साथ में आखिरी भोजन","Morning":"सुबह","Vidai":"विदाई","A tearful, loving farewell":"आँसुओं और आशीर्वाद भरी विदाई","After Phere":"फेरों के बाद","Engagement &amp;<br>Sangeet Night":"सगाई एवं<br>संगीत संध्या","By the infinite grace of the Almighty":"परमपिता परमेश्वर की असीम कृपा से","<b>The late Mr. Laltu Singh &amp; the late Mrs. Dayawati</b>":"<b>स्वर्गीय श्री लालतू सिंह एवं स्वर्गीया श्रीमती दयावती</b>","request your presence at the wedding<br>of their granddaughter":"अपनी पौत्री के शुभ विवाह में<br>आपकी उपस्थिति की कामना करते हैं",
+"Shower petals":"पुष्प वर्षा","6 PM onwards · Tiger Groove Resort":"शाम 6 बजे से · टाइगर ग्रूव रिसॉर्ट","Engagement & Sangeet Night":"सगाई एवं संगीत संध्या","6 PM onwards":"शाम 6 बजे से","A ring, a promise and a night of music":"एक अंगूठी, एक वादा और संगीत भरी शाम","Breakfast & Check-out":"नाश्ता एवं चेक-आउट","One last meal, with full hearts":"विदा से पहले साथ में आखिरी भोजन","Morning":"सुबह","Vidai":"विदाई","A tearful, loving farewell":"आँसुओं और आशीर्वाद भरी विदाई","After Phere":"फेरों के बाद","Engagement &amp;<br>Sangeet Night":"सगाई एवं<br>संगीत संध्या","By the infinite grace of the Almighty":"परमपिता परमेश्वर की असीम कृपा से","<b>The late Laltu Singh &amp; the late Dayawati</b>":"<b>स्वर्गीय लल्टू सिंह एवं स्वर्गीया दयावती</b>","request your presence at the wedding<br>of their granddaughter":"अपनी पौत्री के शुभ विवाह में<br>आपकी उपस्थिति की कामना करते हैं",
 "daughter of Mr. Suresh Singh &amp; Mrs. Deepa Chauhan":"सुपुत्री श्री सुरेश सिंह एवं श्रीमती दीपा चौहान","of Dhampur":"धामपुर","with":"संग","son of Mr. Krishna Pal Singh &amp; Mrs. Sarvesh Chauhan":"सुपुत्र श्री कृष्ण पाल सिंह एवं श्रीमती सर्वेश चौहान","of Ghaziabad":"गाज़ियाबाद",
 "Together with their families":"अपने परिवारजनों के आशीर्वाद सहित","Priyanshi":"प्रियांशी","weds":"संग","Aryan":"आर्यन",
 "29 · 30 November 2026":"29 · 30 नवंबर 2026","With the blessings of":"के शुभ आशीर्वाद से",
@@ -660,12 +665,13 @@ function setLang(l){setTimeout(fitEv,50);lang=l;document.documentElement.lang=l;
  $$('[data-en]').forEach(e=>e.innerHTML=l==='hi'?HI[e.dataset.en]:e.dataset.en);
  $('#lang').textContent=l==='hi'?'EN':'हिंदी';renderDays();renderDress()}
 $('#lang').onclick=()=>setLang(lang==='hi'?'en':'hi');
+setLang('hi');
 /* rose petal shower: one tap, one shower of small, curled petals that flutter down */
 (function(){const cv=$('#petals'),cx=cv.getContext('2d'),btn=$('#pet');let P=[],run=false,W=0,H=0,dpr=1,last=0;
  function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
  size();addEventListener('resize',size);
  const COL=[['#6e0a1a','#b3122f','#e2566c'],['#7a0c1e','#c41e3a','#ee6b80'],['#5e0816','#a10f2a','#d8455c'],['#82102a','#cf2846','#f58a9a']];
- function petal(){const s=5+Math.random()*5;return{x:W*(.08+Math.random()*.84),y:-15-Math.random()*H*.7,vx:(Math.random()-.5)*1,vy:.5+Math.random(),s:s,
+ function petal(){const s=5+Math.random()*5;return{x:W*(.08+Math.random()*.84),y:-15-Math.random()*H*.7,vx:(Math.random()-.5)*1,vy:.3+Math.random()*.4,s:s,
   a:Math.random()*6.28,va:(Math.random()-.5)*.07,flip:Math.random()*6.28,vf:.05+Math.random()*.08,curl:Math.random()*6.28,vc:.03+Math.random()*.05,
   sway:Math.random()*6.28,c:COL[Math.random()*COL.length|0]}}
  function draw(q){const fx=Math.cos(q.flip),cu=.55+.45*Math.cos(q.curl),s=q.s;cx.save();cx.translate(q.x,q.y);cx.rotate(q.a);cx.scale(Math.max(.18,Math.abs(fx)),cu);
@@ -685,12 +691,13 @@ $('#lang').onclick=()=>setLang(lang==='hi'?'en':'hi');
  function step(t){const dt=Math.min(2.5,(t-last)/16.7||1);last=t;cx.clearRect(0,0,W,H);
   for(const q of P){q.sway+=.028*dt;q.flip+=q.vf*dt;q.curl+=q.vc*dt;
    const flat=.3+.7*Math.abs(Math.cos(q.flip));
-   q.vy+=(.04-q.vy*.02*(1.4-flat))*dt;q.vy=Math.min(q.vy,2*flat+.5);
+   q.vy+=(.02-q.vy*.02*(1.4-flat))*dt;q.vy=Math.min(q.vy,.9*flat+.35);
    q.vx+=(Math.sin(q.sway)*.045+(Math.random()-.5)*.02)*dt;q.vx*=.985;
    q.x+=q.vx*dt;q.y+=q.vy*dt;q.a+=q.va*dt+q.vx*.005;draw(q)}
   P=P.filter(q=>q.y<H+30&&q.x>-40&&q.x<W+40);
   if(P.length)requestAnimationFrame(step);else{run=false;cx.clearRect(0,0,W,H)}}
- btn.onclick=()=>{for(let k=0;k<90;k++)P.push(petal());if(!run){run=true;last=performance.now();requestAnimationFrame(step)}};})();
+ btn.onclick=()=>{for(let k=0;k<90;k++)P.push(petal());if(!run){run=true;last=performance.now();requestAnimationFrame(step)}};
+ setInterval(()=>{if(document.hidden||P.length>14)return;const q=petal();q.y=-15;P.push(q);if(!run){run=true;last=performance.now();requestAnimationFrame(step)}},1100);})();
 
 
 /* ---------- music ---------- */
