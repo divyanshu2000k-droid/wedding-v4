@@ -751,6 +751,7 @@ function jumpDay(n){const k=STEPS.findIndex(x=>x[0]===n);const sc=$('#sched');st
 const env=$('#env'),v1=$('#v1');let opened=false;
 function done(){if(opened)return;opened=true;env.classList.add('gone');document.body.classList.remove('locked');active=0;sub=0;renderDays();S[0].classList.add('first');st.scrollTop=0;show(0);S.forEach(x=>io.observe(x));setTimeout(()=>env.remove(),1300)}
 $('#seal').onclick=()=>{env.classList.add('play');mus.play().catch(()=>{});v1.play().catch(done);setTimeout(()=>{if(v1.paused||v1.readyState<2)done()},2500)};
+env.addEventListener('click',()=>{if(!env.classList.contains('play'))$('#seal').click()});env.style.cursor='pointer';
 v1.onended=done;
 v1.addEventListener('timeupdate',function f(){if(v1.currentTime>0.05){env.classList.add('playing');v1.removeEventListener('timeupdate',f)}});
 </script>
