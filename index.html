@@ -773,4 +773,130 @@ env.addEventListener('click',()=>{if(!env.classList.contains('play'))$('#seal').
 v1.onended=done;
 v1.addEventListener('timeupdate',function f(){if(v1.currentTime>0.05){env.classList.add('playing');v1.removeEventListener('timeupdate',f)}});
 </script>
+<script>
+/* dark-proof: Android Chrome's forced dark theme recolours text and backgrounds but never what a canvas draws.
+   So every text block, small coloured background and icon is redrawn on a canvas inside its own element,
+   in its exact computed font, colour and position; the original stays in place (invisible) for layout,
+   language switching, screen readers and animations. */
+(function(){
+const PAD=40,dpr=Math.min(3,window.devicePixelRatio||1),VA=innerWidth*innerHeight;
+const SKIPTAG=/^(SCRIPT|STYLE|CANVAS|VIDEO|AUDIO|IMG|SVG|NOSCRIPT|IFRAME|HEAD|TITLE|svg)$/;
+const st=document.createElement('style');
+st.textContent='.dpc{position:absolute!important;pointer-events:none!important;left:auto!important;top:auto!important;padding:0!important;border:0!important;animation:none!important;transition:none!important;transform:none!important;opacity:1!important;z-index:1}'+
+ '.dpt,.dpt *{-webkit-text-fill-color:transparent!important;text-shadow:none!important}.dpt::before,.dpt::after,.dpt *::before,.dpt *::after{-webkit-text-fill-color:currentcolor!important}.dpo{border-color:transparent!important}'+
+ '.dpb{background:transparent!important}.dpi{opacity:0!important}.dppa::after,.dppb::before{border-color:transparent!important}';
+document.head.appendChild(st);
+const bg=document.createElement('canvas');bg.id='dpbg';bg.setAttribute('aria-hidden','true');
+bg.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none';
+function paintBg(){const c=getComputedStyle(document.body).backgroundColor;bg.width=4;bg.height=4;const x=bg.getContext('2d');x.fillStyle=c;x.fillRect(0,0,4,4);document.documentElement.style.background='transparent';document.body.style.background='transparent'}
+function blockOf(el){while(el&&el!==document.body){const d=getComputedStyle(el).display;if(d!=='inline'&&d!=='contents')return el;el=el.parentElement}return null}
+function hasBorder(cs){return['Top','Right','Bottom','Left'].some(k=>(parseFloat(cs['border'+k+'Width'])||0)>0&&cs['border'+k+'Style']!=='none'&&!/rgba\(\d+, \d+, \d+, 0\)/.test(cs['border'+k+'Color']))}
+function solidBg(el){const c=getComputedStyle(el);if(c.backgroundImage.includes('radial')||c.backgroundImage.includes('url('))return null;
+ const lin=c.backgroundImage.includes('linear-gradient');if(lin&&!/^auto( auto)?$/.test(c.backgroundSize))return null;const m=c.backgroundColor.match(/[\d.]+/g);const a=m&&m.length===4?+m[3]:1;
+ if(!lin&&(!m||a===0))return null;if(el.matches('.sc,#stage,#env,.box,article,html,body,i.pt'))return null;
+ const r=el.getBoundingClientRect();if(r.width*r.height>VA*.5)return null;return c}
+const tx=t=>t;
+function caseOf(s,tt){return tt==='uppercase'?s.toUpperCase():tt==='lowercase'?s.toLowerCase():tt==='capitalize'?s.replace(/(^|\s)\S/g,x=>x.toUpperCase()):s}
+function shadowOf(ts){if(!ts||ts==='none')return null;const col=(ts.match(/rgba?\([^)]*\)/)||['rgba(0,0,0,.5)'])[0];const n=ts.replace(/rgba?\([^)]*\)/,'').match(/-?[\d.]+px/g)||[];return{col:col,x:parseFloat(n[0]||0),y:parseFloat(n[1]||0),b:parseFloat(n[2]||0)}}
+function gradOf(x,str,w,h){const m=str.match(/linear-gradient\(((?:[^()]|\([^()]*\))*)\)/);if(!m)return null;let parts=m[1].split(/,(?![^(]*\))/).map(s=>s.trim());let ang=180;
+ if(/deg$/.test(parts[0])){ang=parseFloat(parts.shift())}else if(/^to /.test(parts[0])){const d=parts.shift();ang=d.includes('right')?90:d.includes('left')?270:d.includes('top')?0:180}
+ const r=ang*Math.PI/180,dx=Math.sin(r),dy=-Math.cos(r),L=Math.abs(w*dx)+Math.abs(h*dy);
+ const g=x.createLinearGradient(w/2-dx*L/2,h/2-dy*L/2,w/2+dx*L/2,h/2+dy*L/2);
+ parts.forEach((p,i)=>{const col=(p.match(/rgba?\([^)]*\)|#[0-9a-f]+/i)||['rgba(0,0,0,0)'])[0];const pc=p.match(/([\d.]+)%/);g.addColorStop(pc?+pc[1]/100:i/Math.max(1,parts.length-1),col)});return g}
+
+// solid "ring" box-shadows (photo frames, dot outlines) are drawn on a canvas just behind the element
+function splitTop(v){const o=[];let d=0,cur='';for(const ch of v){if(ch==='(')d++;if(ch===')')d--;if(ch===','&&!d){o.push(cur.trim());cur=''}else cur+=ch}if(cur.trim())o.push(cur.trim());return o}
+function ringsOf(v){if(!v||v==='none')return null;const rs=[],keep=[];splitTop(v).forEach(p=>{if(/inset/.test(p)){keep.push(p);return}const col=(p.match(/rgba?\([^)]*\)|#[0-9a-f]+/i)||[''])[0];const n=(p.replace(col,'').match(/-?[\d.]+px/g)||[]).map(parseFloat);
+ if(n.length>=4&&!n[0]&&!n[1]&&!n[2]&&n[3]>0)rs.push({c:col,s:n[3]});else keep.push(p)});return rs.length?{rs:rs,keep:keep.join(',')||'none'}:null}
+function radii(cs,W,H,e){return['borderTopLeftRadius','borderTopRightRadius','borderBottomRightRadius','borderBottomLeftRadius'].map(k=>{const v=cs[k].split(' ');const f=(t,L)=>t.endsWith('%')?parseFloat(t)/100*L:parseFloat(t)||0;const rx=f(v[0],W),ry=f(v[1]||v[0],H);return{x:Math.max(0,rx+e),y:Math.max(0,ry+e)}})}
+const rings=new Map();
+function collectRings(){document.querySelectorAll('body *').forEach(el=>{if(rings.has(el)||SKIPTAG.test(el.tagName)||el.closest('svg')||el.classList.contains('dpc'))return;const cs=getComputedStyle(el);const g=ringsOf(cs.boxShadow);if(!g||!el.parentElement)return;
+ const c=document.createElement('canvas');c.className='dpc dpr';c.setAttribute('aria-hidden','true');el.parentElement.insertBefore(c,el);rings.set(el,{c:c,g:g});el.style.setProperty('box-shadow',g.keep,'important');ro.observe(el)})}
+function drawRing(el){const o=rings.get(el);if(!o||!el.isConnected)return;const c=o.c,W=el.offsetWidth,H=el.offsetHeight;const cs=getComputedStyle(el);
+ if(!W||cs.display==='none'||cs.visibility==='hidden'){c.width=c.height=0;return}
+ const P=Math.max(...o.g.rs.map(q=>q.s))+2;c.style.width=(W+2*P)+'px';c.style.height=(H+2*P)+'px';c.width=Math.ceil((W+2*P)*dpr);c.height=Math.ceil((H+2*P)*dpr);
+ const z=parseInt(cs.zIndex);c.style.zIndex=isNaN(z)?'0':String(z);c.style.setProperty('opacity',cs.opacity,'important');
+ const er=el.getBoundingClientRect(),sc=er.width/W||1;c.style.setProperty('margin','0px','important');const cr=c.getBoundingClientRect();
+ c.style.setProperty('margin',((er.top-cr.top)/sc-P)+'px 0 0 '+((er.left-cr.left)/sc-P)+'px','important');
+ const x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);
+ [...o.g.rs].sort((a,b)=>b.s-a.s).forEach(q=>{x.beginPath();x.roundRect(P-q.s,P-q.s,W+2*q.s,H+2*q.s,radii(cs,W,H,q.s));x.fillStyle=q.c;x.fill()});
+ x.globalCompositeOperation='destination-out';x.beginPath();x.roundRect(P,P,W,H,radii(cs,W,H,0));x.fill();x.globalCompositeOperation='source-over'}
+// thin decorative borders drawn by ::before/::after (e.g. the line inside the photo frame)
+function drawPseudo(b,x,ox,oy,sc){b.classList.remove('dppa','dppb');['::before','::after'].forEach(ps=>{const cs=getComputedStyle(b,ps);if(cs.content==='none'||cs.display==='none')return;const bw=parseFloat(cs.borderTopWidth)||0;if(!bw||cs.borderTopStyle==='none')return;
+ const br=b.getBoundingClientRect();const W=b.offsetWidth,H=b.offsetHeight;const L=parseFloat(cs.left)||0,T=parseFloat(cs.top)||0,R=parseFloat(cs.right)||0,B=parseFloat(cs.bottom)||0;const w=parseFloat(cs.width)||W-L-R,h=parseFloat(cs.height)||H-T-B;
+ x.save();x.strokeStyle=cs.borderTopColor;x.lineWidth=bw;x.beginPath();x.roundRect((br.left-ox)/sc+L+bw/2,(br.top-oy)/sc+T+bw/2,w-bw,h-bw,radii(cs,w,h,0));x.stroke();x.restore();const ob=blocks.get(b);if(ob&&!b.innerText.trim())ob.c.style.zIndex='10';b.classList.add('dpp'+(ps==='::after'?'a':'b'))})}
+const blocks=new Map();
+function collect(){
+ const set=new Set();
+ const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>{if(!n.nodeValue.trim())return 2;let p=n.parentElement;while(p){if(SKIPTAG.test(p.tagName))return 2;p=p.parentElement}return 1}});
+ let n;while(n=w.nextNode()){const b=blockOf(n.parentElement);if(b)set.add(b)}
+ document.querySelectorAll('body *').forEach(el=>{if(SKIPTAG.test(el.tagName)||el.closest('svg'))return;if(el.classList.contains('dpc'))return;{const cz=getComputedStyle(el);if(cz.transform!=='none'&&!el.innerText.trim())return;if(solidBg(el)||el.classList.contains('dpb')||el.classList.contains('dpo')||hasBorder(cz))set.add(el)}});
+ document.querySelectorAll('body *').forEach(el=>{if(SKIPTAG.test(el.tagName)||el.closest('svg')||el.classList.contains('dpc'))return;for(const ps of['::before','::after']){const cs=getComputedStyle(el,ps);if(cs.content!=='none'&&(parseFloat(cs.borderTopWidth)||0)>0&&cs.borderTopStyle!=='none'){set.add(el);break}}});
+ document.querySelectorAll('button svg,#ctl svg,#pet svg,.btn svg').forEach(s=>{const b=blockOf(s.parentElement);if(b)set.add(b)});
+ for(const b of set){const ob=blocks.get(b);if(ob&&ob.c.parentNode!==b){b.insertBefore(ob.c,b.firstChild);continue}}
+ for(const b of set)if(!blocks.has(b)){const c=document.createElement('canvas');c.className='dpc';c.setAttribute('aria-hidden','true');b.insertBefore(c,b.firstChild);blocks.set(b,{c:c,bgc:null});ro.observe(b)}
+}
+function draw(b){const o=blocks.get(b);if(!o||!b.isConnected)return;const c=o.c;const W=b.offsetWidth,H=b.offsetHeight;if(!W&&!H){c.width=c.height=0;return}
+ const bs=getComputedStyle(b);
+ // the background, captured once before we clear it
+ b.classList.remove('dpb');{const s=solidBg(b);o.bgc=s?{col:s.backgroundColor,img:s.backgroundImage}:false;if(s)b.classList.add('dpb')}
+ c.style.width=(W+2*PAD)+'px';c.style.height=(H+2*PAD)+'px';
+ c.width=Math.ceil((W+2*PAD)*dpr);c.height=Math.ceil((H+2*PAD)*dpr);
+ // where the canvas really sits (static position, transforms), so offsets are exact
+ 
+ const pos=bs.position==='static'?null:true;
+ const br=b.getBoundingClientRect(),sc=br.width/(W||1)||1;
+ const x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);
+ // place canvas so that its PAD origin matches the block's border-box top-left
+ c.style.setProperty('margin','0px','important');let cr=c.getBoundingClientRect();
+ const offX=(br.left-cr.left)/sc-PAD,offY=(br.top-cr.top)/sc-PAD;c.style.setProperty('margin',offY+'px 0 0 '+offX+'px','important');cr=c.getBoundingClientRect();
+ const ox=cr.left,oy=cr.top;
+ if(o.bgc){const rad=Math.min(parseFloat(bs.borderTopLeftRadius)||0,H/2,W/2);x.save();x.translate(PAD,PAD);x.beginPath();x.roundRect(0,0,W,H,radii(bs,W,H,0));
+  if(o.bgc.img.includes('linear-gradient')){const g=gradOf(x,o.bgc.img,W,H);x.fillStyle=g||o.bgc.col}else x.fillStyle=o.bgc.col;x.fill();x.restore()}
+
+ // borders
+ b.classList.remove('dpo');{const cs2=getComputedStyle(b);if(hasBorder(cs2)){const S=['Top','Right','Bottom','Left'].map(k=>({w:(cs2['border'+k+'Style']==='none'?0:parseFloat(cs2['border'+k+'Width'])||0),c:cs2['border'+k+'Color']}));
+  const same=S.every(q=>q.w===S[0].w&&q.c===S[0].c);const rr=radii(cs2,W,H,0);const round=rr.some(q=>q.x||q.y);x.save();x.translate(PAD,PAD);
+  if(same&&round){x.strokeStyle=S[0].c;x.lineWidth=S[0].w;x.beginPath();x.roundRect(S[0].w/2,S[0].w/2,W-S[0].w,H-S[0].w,radii(cs2,W,H,-S[0].w/2));x.stroke()}
+  else{if(S[0].w){x.fillStyle=S[0].c;x.fillRect(0,0,W,S[0].w)}if(S[1].w){x.fillStyle=S[1].c;x.fillRect(W-S[1].w,0,S[1].w,H)}if(S[2].w){x.fillStyle=S[2].c;x.fillRect(0,H-S[2].w,W,S[2].w)}if(S[3].w){x.fillStyle=S[3].c;x.fillRect(0,0,S[3].w,H)}}
+  x.restore();b.classList.add('dpo')}}
+ drawPseudo(b,x,ox,oy,sc);
+ // icons
+ b.querySelectorAll(':scope svg').forEach(s=>{if(blockOf(s.parentElement)!==b)return;const r=s.getBoundingClientRect();if(!r.width)return;
+  const cl=s.cloneNode(true);cl.setAttribute('width',r.width/sc);cl.setAttribute('height',r.height/sc);cl.style.color=getComputedStyle(s).color;cl.setAttribute('color',getComputedStyle(s).color);
+  if(!cl.getAttribute('xmlns'))cl.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  const im=new Image();const X=(r.left-ox)/sc,Y=(r.top-oy)/sc;im.onload=()=>{x.drawImage(im,X,Y,r.width/sc,r.height/sc)};
+  im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(cl));if(!s.classList.contains('dpi'))s.classList.add('dpi')});
+ // text, word by word
+ const w=document.createTreeWalker(b,NodeFilter.SHOW_TEXT);let n,any=false;const rg=document.createRange();
+ while(n=w.nextNode()){if(!n.nodeValue.trim())continue;const pe=n.parentElement;if(blockOf(pe)!==b||pe.closest('svg')||SKIPTAG.test(pe.tagName))continue;
+  const cs=getComputedStyle(pe);if(cs.visibility==='hidden'||cs.display==='none')continue;
+  x.font=cs.fontStyle+' '+cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily;try{x.letterSpacing=cs.letterSpacing==='normal'?'0px':cs.letterSpacing}catch(e){}
+  x.fillStyle=cs.color;x.textBaseline='alphabetic';const sh=shadowOf(cs.textShadow);
+  if(sh){x.shadowColor=sh.col;x.shadowOffsetX=sh.x;x.shadowOffsetY=sh.y;x.shadowBlur=sh.b}else{x.shadowColor='transparent';x.shadowBlur=0}
+  const t=n.nodeValue,re=/\S+/g;let m;
+  while(m=re.exec(t)){rg.setStart(n,m.index);rg.setEnd(n,m.index+m[0].length);const rs=rg.getClientRects();if(!rs.length)continue;
+   const word=caseOf(m[0],cs.textTransform);
+   const sameLine=[...rs].every(q=>Math.abs(q.top-rs[0].top)<2&&Math.abs(q.height-rs[0].height)<2);
+   if(rs.length===1||sameLine){const r=rs.length===1?rs[0]:rg.getBoundingClientRect();const mt=x.measureText(word);const a=mt.fontBoundingBoxAscent,d=mt.fontBoundingBoxDescent,hh=r.height/sc;
+    x.fillText(word,(r.left-ox)/sc,(r.top-oy)/sc+a*(hh/(a+d||1)));any=true}
+   else{const segs=window.Intl&&Intl.Segmenter?[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(m[0])].map(g=>[g.index,g.segment]):[...m[0]].map((g,i)=>[i,g]);for(const [gi,gs] of segs){rg.setStart(n,m.index+gi);rg.setEnd(n,m.index+gi+gs.length);const r=rg.getBoundingClientRect();if(!r.width)continue;const ch=caseOf(gs,cs.textTransform);const mt=x.measureText(ch);const a=mt.fontBoundingBoxAscent,d=mt.fontBoundingBoxDescent;x.fillText(ch,(r.left-ox)/sc,(r.top-oy)/sc+a*((r.height/sc)/(a+d||1)))}any=true}}}
+ if(any)b.classList.add('dpt')}
+let q=new Set(),tm=0;
+function sched(b){if(b)q.add(b);else{blocks.forEach((v,k)=>q.add(k));rings.forEach((v,k)=>q.add(k))}if(!tm)tm=requestAnimationFrame(()=>{tm=0;const l=[...q];q.clear();l.forEach(e=>{if(blocks.has(e))draw(e);if(rings.has(e))drawRing(e)})})}
+const ro=new ResizeObserver(es=>es.forEach(e=>sched(e.target)));
+let mt=0;
+const mo=new MutationObserver(ms=>{ms=ms.filter(m=>m.type!=='attributes'||((m.target.getAttribute&&m.target.getAttribute('class'))||'').replace(/\s*dp[a-z]+\b/g,'')!==((m.oldValue||'')+'').replace(/\s*dp[a-z]+\b/g,''));if(!ms.length)return;
+ const at=ms.filter(m=>m.type==='attributes');if(at.length===ms.length){const hit=new Set();at.forEach(m=>{let e=m.target;while(e&&e!==document.body){if(blocks.has(e)||rings.has(e))hit.add(e);e=e.parentElement}blocks.forEach((v,k)=>{if(m.target.contains(k))hit.add(k)});rings.forEach((v,k)=>{if(m.target.contains(k))hit.add(k)})});const run=()=>hit.forEach(e=>sched(e));run();setTimeout(run,60);setTimeout(run,700);setTimeout(run,1600);return}if(ms.every(m=>[...m.addedNodes].every(n=>n.classList&&n.classList.contains('dpc'))&&!m.removedNodes.length&&m.type==='childList'))return;
+ clearTimeout(mt);mt=setTimeout(()=>{collectRings();collect();sched()},80)});
+function start(){document.body.appendChild(bg);paintBg();collectRings();collect();sched();
+ mo.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeOldValue:true,attributeFilter:['class','aria-selected']});
+ addEventListener('resize',()=>sched());
+ if(document.fonts){document.fonts.ready.then(()=>sched());document.fonts.addEventListener&&document.fonts.addEventListener('loadingdone',()=>sched())}
+ [300,1000,2500,5000].forEach(t=>setTimeout(()=>sched(),t))}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+window.dpRedraw=()=>sched();
+(function loop(){rings.forEach((o,el)=>{if(el.getAnimations&&el.getAnimations().some(n=>n.playState==='running'))drawRing(el)});requestAnimationFrame(loop)})();
+})();
+</script>
 </body></html>
