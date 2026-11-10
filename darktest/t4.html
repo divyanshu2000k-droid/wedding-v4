@@ -1,0 +1,9 @@
+<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark">
+<link href="https://fonts.googleapis.com/css2?family=Amita&family=Laila:wght@400&display=swap" rel="stylesheet">
+<style>:root{color-scheme:light dark}body{margin:0;background:#f6ead8;font-family:Laila,serif;text-align:center;color:#5a3a2a}
+.top{background:linear-gradient(#f3c9a8,#f6ead8);padding:24px 16px}h1{font-family:Amita;font-weight:400;color:#7a1626;font-size:44px;line-height:1.3;margin:10px 0}h1 span{color:#b8892e;font-size:30px}
+.btn{display:inline-block;background:#fff;color:#7a1626;border-radius:99px;padding:8px 18px;margin:6px;box-shadow:0 2px 8px rgba(0,0,0,.2)}.pill{background:#a01430;color:#fff}
+.tag{font:600 14px sans-serif;background:#333;color:#ff0;padding:6px}img{width:100%;display:block}</style></head><body>
+<div class="tag">TEST 4: Names drawn as picture</div><div class="top"><canvas id="cv" width="700" height="260" style="width:350px;height:130px"></canvas><span class="btn">EN</span><span class="btn pill">पुष्प वर्षा</span></div>
+<img src="../a/family.jpg" alt=""><p id="dm"></p><script>document.fonts.load('48px Amita').then(()=>{const c=cv.getContext('2d');c.scale(2,2);c.textAlign='center';c.font='44px Amita';c.fillStyle='#7a1626';c.fillText('प्रियांशी संग आर्यन',175,60);c.font='22px Laila';c.fillStyle='#5a3a2a';c.fillText('29 · 30 नवंबर 2026',175,105)})</script><script>dm.textContent='phone dark mode: '+matchMedia('(prefers-color-scheme: dark)').matches</script>
+<p><a href="t1.html">1</a> · <a href="t2.html">2</a> · <a href="t3.html">3</a> · <a href="t4.html">4</a></p></body></html>
