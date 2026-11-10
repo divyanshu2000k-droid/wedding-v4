@@ -410,9 +410,9 @@ body.hi b,body.hi .ev-nm b,body.hi .panel h3{font-weight:500!important}
 @keyframes hintbob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-10px)}}
 body.hi #pet{font-size:15px!important}
 body.hi #hint{font-family:'Laila',serif!important;letter-spacing:0!important;font-size:15px!important}
-#seal::before,#seal::after{content:"";position:absolute;inset:-6%;border-radius:50%;border:3px solid rgba(255,236,200,.9);animation:ring 2s ease-out infinite;pointer-events:none}
+#seal::before,#seal::after{content:"";position:absolute;top:-36%;bottom:28%;left:-4%;right:-4%;border-radius:50%;border:1.5px solid rgba(255,240,215,.7);opacity:0;animation:ring 2.6s ease-out infinite;pointer-events:none}
 #seal::after{animation-delay:1s}
-@keyframes ring{0%{transform:scale(.85);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+@keyframes ring{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1.45);opacity:0}}
 :root{color-scheme:light dark}html,body{background-color:#f6ead8}
 /* rsvp */
 .rsvp{display:grid;gap:11px;text-align:left;max-width:360px;margin:14px auto 0}
@@ -831,7 +831,7 @@ function collect(){
  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>{if(!n.nodeValue.trim())return 2;let p=n.parentElement;while(p){if(SKIPTAG.test(p.tagName))return 2;p=p.parentElement}return 1}});
  let n;while(n=w.nextNode()){const b=blockOf(n.parentElement);if(b)set.add(b)}
  document.querySelectorAll('body *').forEach(el=>{if(SKIPTAG.test(el.tagName)||el.closest('svg'))return;if(el.classList.contains('dpc'))return;{const cz=getComputedStyle(el);if(cz.transform!=='none'&&!el.innerText.trim())return;if(solidBg(el)||el.classList.contains('dpb')||el.classList.contains('dpo')||hasBorder(cz))set.add(el)}});
- document.querySelectorAll('body *').forEach(el=>{if(SKIPTAG.test(el.tagName)||el.closest('svg')||el.classList.contains('dpc'))return;for(const ps of['::before','::after']){const cs=getComputedStyle(el,ps);if(cs.content!=='none'&&(parseFloat(cs.borderTopWidth)||0)>0&&cs.borderTopStyle!=='none'){set.add(el);break}}});
+ document.querySelectorAll('body *').forEach(el=>{if(SKIPTAG.test(el.tagName)||el.closest('svg')||el.classList.contains('dpc'))return;if(el.closest('#env'))return;for(const ps of['::before','::after']){const cs=getComputedStyle(el,ps);if(cs.content!=='none'&&(parseFloat(cs.borderTopWidth)||0)>0&&cs.borderTopStyle!=='none'){set.add(el);break}}});
  document.querySelectorAll('button svg,#ctl svg,#pet svg,.btn svg').forEach(s=>{const b=blockOf(s.parentElement);if(b)set.add(b)});
  for(const b of set){const ob=blocks.get(b);if(ob&&ob.c.parentNode!==b){b.insertBefore(ob.c,b.firstChild);continue}}
  for(const b of set)if(!blocks.has(b)){const c=document.createElement('canvas');c.className='dpc';c.setAttribute('aria-hidden','true');b.insertBefore(c,b.firstChild);blocks.set(b,{c:c,bgc:null});ro.observe(b)}
